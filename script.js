@@ -1,3 +1,4 @@
+
 import { createClient } from
 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
@@ -21,6 +22,24 @@ function closeModal() {
   modal.setAttribute('aria-hidden', 'true');
 }
 
+function setMessage(message) {
+  $('authMessage').textContent = message;
+}
+
+function setMode(signup) {
+  isSignup = signup;
+
+  $('authTitle').textContent = signup ? 'Đăng ký' : 'Đăng nhập';
+  $('authSubmit').textContent = signup ? 'Tạo tài khoản' : 'Đăng nhập';
+  $('confirmWrap').hidden = !signup;
+
+  $('switchText').childNodes[0].textContent =
+    signup ? 'Đã có tài khoản? ' : 'Chưa có tài khoản? ';
+
+  $('switchMode').textContent =
+    signup ? 'Đăng nhập' : 'Đăng ký';
+}
+
 $('openLogin').addEventListener('click', openModal);
 $('heroLogin').addEventListener('click', openModal);
 $('closeLogin').addEventListener('click', closeModal);
@@ -29,18 +48,8 @@ modal.addEventListener('click', e => {
   if (e.target === modal) closeModal();
 });
 
-function setMessage(message) {
-  $('authMessage').textContent = message;
-}
-
 $('switchMode').addEventListener('click', () => {
-  isSignup = !isSignup;
-  $('authTitle').textContent = isSignup ? 'Đăng ký' : 'Đăng nhập';
-  $('authSubmit').textContent = isSignup ? 'Tạo tài khoản' : 'Đăng nhập';
-  $('confirmWrap').hidden = !isSignup;
-  $('switchText').childNodes[0].textContent =
-    isSignup ? 'Đã có tài khoản? ' : 'Chưa có tài khoản? ';
-  $('switchMode').textContent = isSignup ? 'Đăng nhập' : 'Đăng ký';
+  setMode(!isSignup);
   setMessage('');
 });
 
@@ -59,7 +68,7 @@ $('authForm').addEventListener('submit', async e => {
         throw new Error('Mật khẩu xác nhận không khớp.');
       }
 
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -69,7 +78,15 @@ $('authForm').addEventListener('submit', async e => {
 
       if (error) throw error;
 
-      setMessage('Đăng ký thành công. Kiểm tra email để xác nhận tài khoản.');
+      if (data.session) {
+        setMessage('Tạo tài khoản thành công!');
+      } else {
+        $('authPassword').value = '';
+        $('authConfirm').value = '';
+        setMode(false);
+        setMessage('Đăng ký thành công! Hãy kiểm tra email xác nhận, sau đó đăng nhập.');
+      }
+
     } else {
       const { error } = await supabase.auth.signInWithPassword({
         email,
@@ -80,6 +97,7 @@ $('authForm').addEventListener('submit', async e => {
 
       setMessage('Đăng nhập thành công!');
     }
+
   } catch (error) {
     setMessage(error.message);
   } finally {
@@ -87,7 +105,7 @@ $('authForm').addEventListener('submit', async e => {
   }
 });
 
-async function updateAccount(user) {
+function updateAccount(user) {
   $('signedArea').hidden = !user;
   $('authForm').hidden = !!user;
   $('switchText').hidden = !!user;
@@ -96,22 +114,29 @@ async function updateAccount(user) {
     $('userEmail').textContent = user.email;
     $('authTitle').textContent = 'Tài khoản của bạn';
   } else {
-    $('authTitle').textContent = 'Đăng nhập';
+    setMode(false);
   }
 }
 
 $('logoutBtn').addEventListener('click', async () => {
   const { error } = await supabase.auth.signOut();
+
   if (error) {
     setMessage(error.message);
     return;
   }
-  setMessage('Đã đăng xuất.');
+
+  setMessage('Đã đăng xuất!');
 });
 
 supabase.auth.onAuthStateChange((_event, session) => {
   updateAccount(session?.user ?? null);
 });
 
-const { data } = await supabase.auth.getSession();
-updateAccount(data.session?.user ?? null);
+const { data, error } = await supabase.auth.getSession();
+
+if (error) {
+  setMessage(error.message);
+} else {
+  updateAccount(data.session?.user ?? null);
+          }
