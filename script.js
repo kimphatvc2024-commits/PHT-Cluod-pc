@@ -16,22 +16,14 @@ let isSignup = false;
 let currentUser = null;
 let selectedPlan = '';
 let selectedPrice = 0;
+let busy = false;
 
 function formatVnd(amount) {
   return Number(amount).toLocaleString('vi-VN') + 'đ';
 }
 
-function updateModalQrInfo(planName, price) {
-  if ($('modalQrAmount')) {
-    $('modalQrAmount').textContent = `Số tiền cần chuyển: ${formatVnd(price)}`;
-  }
-  if ($('transferMemo')) {
-    $('transferMemo').textContent = `PHT ${(planName || 'CLOUD PC').toUpperCase()}`;
-  }
-}
-
-function message(text) {
-  $('authMessage').textContent = text;
+function setMessage(element, text) {
+  if (element) element.textContent = text;
 }
 
 function openModal() {
@@ -44,14 +36,38 @@ function closeModal() {
   modal.setAttribute('aria-hidden', 'true');
 }
 
+function openPurchaseModal() {
+  purchaseModal.classList.add('show');
+  purchaseModal.setAttribute('aria-hidden', 'false');
+}
+
+function closePurchaseModal() {
+  purchaseModal.classList.remove('show');
+  purchaseModal.setAttribute('aria-hidden', 'true');
+}
+
+function updateModalQrInfo(planName, price) {
+  setMessage(
+    $('modalQrAmount'),
+    `Số tiền cần chuyển: ${formatVnd(price)}`
+  );
+
+  setMessage(
+    $('transferMemo'),
+    `PHT ${(planName || 'CLOUD PC').toUpperCase()}`
+  );
+}
+
 function setMode(signup) {
   isSignup = signup;
 
-  $('authTitle').textContent = signup ? 'Đăng ký' : 'Đăng nhập';
+  $('authTitle').textContent = signup
+    ? 'Đăng ký tài khoản'
+    : 'Đăng nhập';
 
   $('authNote').textContent = signup
-    ? 'Tạo tài khoản PHT Cluod PC.'
-    : 'Đăng nhập tài khoản PHT Cluod PC.';
+    ? 'Tạo tài khoản PHT Cluod PC của bạn.'
+    : 'Đăng nhập vào hệ thống PHT Cluod PC.';
 
   $('authSubmit').textContent = signup
     ? 'Tạo tài khoản'
@@ -67,6 +83,91 @@ function setMode(signup) {
 
   $('authPassword').value = '';
   $('authConfirm').value = '';
+  setMessage($('authMessage'), '');
+}
+
+function showEmptyHistory(messageText) {
+  const area = $('transactionArea');
+  if (!area) return;
+
+  area.replaceChildren();
+
+  const p = document.createElement('p');
+  p.className = 'empty-state';
+  p.textContent = messageText;
+
+  area.appendChild(p);
+}
+
+function createTransactionCard(transaction) {
+  const card = document.createElement('article');
+  card.className = 'tx-card';
+
+  const details = document.createElement('div');
+
+  const title = document.createElement('strong');
+  title.textContent = transaction.plan || 'Cloud PC';
+
+  const date = document.createElement('p');
+  date.textContent = transaction.created_at
+    ? new Date(transaction.created_at).toLocaleString('vi-VN')
+    : '';
+
+  const amount = document.createElement('p');
+  amount.textContent = formatVnd(transaction.amount || 0);
+
+  details.append(title, date, amount);
+
+  const status = document.createElement('span');
+  const isPaid = transaction.status === 'paid';
+
+  status.className = isPaid ? 'status paid' : 'status';
+  status.textContent = isPaid
+    ? 'ĐÃ XÁC NHẬN'
+    : 'ĐANG CHỜ XÁC NHẬN';
+
+  card.append(details, status);
+
+  return card;
+}
+
+async function loadTransactions() {
+  const area = $('transactionArea');
+
+  if (!currentUser || !area) {
+    showEmptyHistory('Vui lòng đăng nhập để xem lịch sử.');
+    return;
+  }
+
+  showEmptyHistory('Đang tải lịch sử giao dịch...');
+
+  const { data, error } = await supabase
+    .from('transactions')
+    .select('id, plan, amount, status, created_at')
+    .eq('user_id', currentUser.id)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    showEmptyHistory('Không thể tải lịch sử giao dịch.');
+    console.error(error);
+    return;
+  }
+
+  area.replaceChildren();
+
+  if (!data || data.length === 0) {
+    showEmptyHistory('Bạn chưa có giao dịch nào.');
+    return;
+  }
+
+  const list = document.createElement('div');
+  list.className = 'tx-list';
+
+  data.forEach(item => {
+    list.appendChild(createTransactionCard(item));
+  });
+
+  area.appendChild(list);
 }
 
 function updateAccount(user) {
@@ -80,6 +181,7 @@ function updateAccount(user) {
     $('authTitle').textContent = 'Tài khoản của bạn';
     $('authNote').textContent = 'Bạn đã đăng nhập PHT Cluod PC.';
     $('userEmail').textContent = user.email || '';
+
     loadTransactions();
   } else {
     setMode(false);
@@ -87,7 +189,7 @@ function updateAccount(user) {
   }
 }
 
-// ĐĂNG NHẬP
+// Mở và đóng cửa sổ đăng nhập
 $('openLogin').addEventListener('click', openModal);
 $('heroLogin').addEventListener('click', openModal);
 $('closeLogin').addEventListener('click', closeModal);
@@ -96,26 +198,37 @@ modal.addEventListener('click', event => {
   if (event.target === modal) closeModal();
 });
 
+// Chuyển đổi đăng nhập / đăng ký
 $('switchMode').addEventListener('click', () => {
   setMode(!isSignup);
-  message('');
 });
 
+// Đăng ký và đăng nhập
 form.addEventListener('submit', async event => {
   event.preventDefault();
 
+  if (busy) return;
+
   const email = $('authEmail').value.trim();
   const password = $('authPassword').value;
+  const confirmPassword = $('authConfirm').value;
 
+  if (isSignup && password !== confirmPassword) {
+    setMessage($('authMessage'), 'Mật khẩu xác nhận không khớp.');
+    return;
+  }
+
+  if (password.length < 6) {
+    setMessage($('authMessage'), 'Mật khẩu cần ít nhất 6 ký tự.');
+    return;
+  }
+
+  busy = true;
   $('authSubmit').disabled = true;
-  message('Đang xử lý...');
+  setMessage($('authMessage'), 'Đang xử lý...');
 
   try {
     if (isSignup) {
-      if (password !== $('authConfirm').value) {
-        throw new Error('Mật khẩu xác nhận không khớp.');
-      }
-
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -127,220 +240,149 @@ form.addEventListener('submit', async event => {
       if (error) throw error;
 
       if (data.session) {
-        updateAccount(data.session.user);
-        message('Tạo tài khoản thành công!');
+        setMessage($('authMessage'), 'Đăng ký thành công!');
       } else {
-        setMode(false);
-        message(
-          'Đăng ký thành công! Hãy kiểm tra email xác nhận.'
+        setMessage(
+          $('authMessage'),
+          'Đăng ký thành công. Hãy kiểm tra email để xác nhận tài khoản.'
         );
       }
-
     } else {
-      const { data, error } =
-        await supabase.auth.signInWithPassword({
-          email,
-          password
-        });
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
 
       if (error) throw error;
 
-      updateAccount(data.user);
-      message('Đăng nhập thành công!');
+      setMessage($('authMessage'), 'Đăng nhập thành công!');
+      form.reset();
+      closeModal();
     }
-
   } catch (error) {
-    message(error.message || 'Có lỗi xảy ra.');
+    setMessage(
+      $('authMessage'),
+      error.message || 'Có lỗi xảy ra. Vui lòng thử lại.'
+    );
   } finally {
+    busy = false;
     $('authSubmit').disabled = false;
   }
 });
 
-// ĐĂNG XUẤT
+// Đăng xuất
 $('logoutBtn').addEventListener('click', async () => {
-  $('logoutBtn').disabled = true;
+  const { error } = await supabase.auth.signOut();
 
-  try {
-    const { error } = await supabase.auth.signOut();
-
-    if (error) throw error;
-
-    updateAccount(null);
-    message('Đã đăng xuất thành công.');
-
-  } catch (error) {
-    message(error.message || 'Không thể đăng xuất.');
-  } finally {
-    $('logoutBtn').disabled = false;
+  if (error) {
+    setMessage($('authMessage'), error.message);
+    return;
   }
+
+  updateAccount(null);
+  closeModal();
 });
 
-// MỞ MUA GÓI
+// Mở cửa sổ mua gói
 document.querySelectorAll('.buyBtn').forEach(button => {
   button.addEventListener('click', () => {
+    if (!currentUser) {
+      openModal();
+      setMessage(
+        $('authMessage'),
+        'Vui lòng đăng nhập trước khi đặt thuê Cloud PC.'
+      );
+      return;
+    }
+
     selectedPlan = button.dataset.plan;
     selectedPrice = Number(button.dataset.price);
 
     $('selectedPlan').textContent = selectedPlan;
     $('selectedPrice').textContent = formatVnd(selectedPrice);
+
     updateModalQrInfo(selectedPlan, selectedPrice);
+    setMessage($('purchaseMessage'), '');
 
-    const confirmBtn = $('confirmPurchase');
-    confirmBtn.disabled = false;
-    confirmBtn.textContent = 'Xác nhận đơn hàng';
-
-    $('purchaseMessage').textContent = currentUser
-      ? 'Quét mã QR thanh toán, sau đó bấm xác nhận để lưu đơn chờ kiểm tra.'
-      : 'Bạn cần đăng nhập trước khi đặt hàng.';
-
-    purchaseModal.classList.add('show');
-    purchaseModal.setAttribute('aria-hidden', 'false');
+    openPurchaseModal();
   });
 });
 
-function closePurchase() {
-  purchaseModal.classList.remove('show');
-  purchaseModal.setAttribute('aria-hidden', 'true');
-}
-
-$('closePurchase').addEventListener('click', closePurchase);
+$('closePurchase').addEventListener('click', closePurchaseModal);
 
 purchaseModal.addEventListener('click', event => {
-  if (event.target === purchaseModal) closePurchase();
+  if (event.target === purchaseModal) {
+    closePurchaseModal();
+  }
 });
 
-// TẠO ĐƠN HÀNG
+// Tạo đơn thuê
 $('confirmPurchase').addEventListener('click', async () => {
+  if (busy) return;
+
   if (!currentUser) {
-    closePurchase();
+    closePurchaseModal();
     openModal();
-    message('Đăng nhập để mua gói Cloud PC.');
     return;
   }
 
-  const button = $('confirmPurchase');
-  button.disabled = true;
-  button.textContent = 'Đang tạo đơn...';
+  if (!selectedPlan || !selectedPrice) {
+    setMessage($('purchaseMessage'), 'Vui lòng chọn gói thuê.');
+    return;
+  }
+
+  busy = true;
+  $('confirmPurchase').disabled = true;
+
+  setMessage(
+    $('purchaseMessage'),
+    'Đang tạo đơn hàng...'
+  );
 
   try {
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('transactions')
       .insert({
         user_id: currentUser.id,
         plan: selectedPlan,
         amount: selectedPrice,
         status: 'pending'
-      })
-      .select()
-      .single();
+      });
 
     if (error) throw error;
 
-    $('purchaseMessage').textContent =
-      `Đã tạo đơn hàng #${data.id} (Trạng thái: Chờ xác minh thanh toán).`;
-
-    button.textContent = 'Đã tạo đơn (Chờ xác minh)';
+    setMessage(
+      $('purchaseMessage'),
+      'Đã tạo đơn hàng. Đơn đang chờ quản trị viên xác nhận thanh toán.'
+    );
 
     await loadTransactions();
-
   } catch (error) {
-    $('purchaseMessage').textContent =
-      'Không tạo được đơn hàng: ' + error.message;
-
-    button.textContent = 'Thử lại';
-    button.disabled = false;
+    setMessage(
+      $('purchaseMessage'),
+      error.message || 'Không thể tạo đơn hàng.'
+    );
+  } finally {
+    busy = false;
+    $('confirmPurchase').disabled = false;
   }
 });
 
-// LỊCH SỬ GIAO DỊCH
-function showEmptyHistory(text) {
-  const area = $('transactionArea');
-  area.classList.remove('tx-list');
-  area.replaceChildren();
-
-  const icon = document.createElement('div');
-  icon.className = 'qr-icon';
-  icon.textContent = '▤';
-
-  const title = document.createElement('strong');
-  title.textContent = 'LỊCH SỬ GIAO DỊCH';
-
-  const description = document.createElement('span');
-  description.textContent = text;
-
-  area.append(icon, title, description);
-}
-
-async function loadTransactions() {
-  if (!currentUser) return;
-
-  const area = $('transactionArea');
-  area.classList.remove('tx-list');
-  area.textContent = 'Đang tải lịch sử giao dịch...';
-
-  try {
-    const { data, error } = await supabase
-      .from('transactions')
-      .select('id, plan, amount, status, created_at')
-      .eq('user_id', currentUser.id)
-      .order('created_at', { ascending: false });
-
-    if (error) throw error;
-
-    area.replaceChildren();
-
-    if (!data.length) {
-      showEmptyHistory('Bạn chưa có giao dịch nào.');
-      return;
-    }
-
-    area.classList.add('tx-list');
-
-    data.forEach(item => {
-      const card = document.createElement('article');
-      card.className = 'plan';
-
-      const title = document.createElement('h3');
-      title.textContent = item.plan;
-
-      const price = document.createElement('div');
-      price.className = 'price';
-      price.textContent = formatVnd(item.amount);
-
-      const status = document.createElement('p');
-      status.textContent =
-        item.status === 'paid'
-          ? 'Đã xác minh thanh toán'
-          : 'Chờ xác minh thanh toán';
-
-      const date = document.createElement('small');
-      date.textContent = new Date(item.created_at)
-        .toLocaleString('vi-VN');
-
-      card.append(title, price, status, date);
-      area.appendChild(card);
-    });
-
-  } catch (error) {
-    showEmptyHistory('Không tải được lịch sử: ' + error.message);
-  }
-}
-
-// KHÔI PHỤC PHIÊN ĐĂNG NHẬP
-supabase.auth.onAuthStateChange((_event, session) => {
-  updateAccount(session?.user ?? null);
+// Khôi phục phiên đăng nhập
+supabase.auth.onAuthStateChange((event, session) => {
+  updateAccount(session?.user || null);
 });
 
 async function initialize() {
   const { data, error } = await supabase.auth.getSession();
 
   if (error) {
-    message('Không thể tải phiên đăng nhập: ' + error.message);
+    console.error('Session error:', error);
     return;
   }
 
-  updateAccount(data.session?.user ?? null);
+  updateAccount(data.session?.user || null);
 }
 
 initialize();
-  
+
