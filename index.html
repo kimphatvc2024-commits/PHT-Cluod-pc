@@ -16,6 +16,7 @@
   </a>
   <nav>
     <a href="#goi">Bảng giá</a>
+    <a href="#lichsu">Lịch sử</a>
     <a href="#huongdan">Hướng dẫn</a>
     <button class="btn btn-outline" id="openLogin">Đăng nhập</button>
   </nav>
@@ -36,7 +37,10 @@
 
     <div class="visual">
       <div class="screen">
-        <div class="screen-top"><i></i><i></i><i></i><span>PHT CLOUD DESKTOP</span></div>
+        <div class="screen-top">
+          <i></i><i></i><i></i>
+          <span>PHT CLOUD DESKTOP</span>
+        </div>
         <div class="screen-content">
           <div class="cloud">☁</div>
           <strong>YOUR CLOUD PC</strong>
@@ -49,39 +53,54 @@
     </div>
   </section>
 
+  <!-- BẢNG GIÁ -->
   <section class="section" id="goi">
     <div class="section-head">
       <div>
         <span class="eyebrow">BẢNG GIÁ</span>
         <h2>Chọn gói Cloud PC</h2>
       </div>
-      <p>Giá tham khảo của PHT.</p>
+      <p>Giá thuê Cloud PC PHT.</p>
     </div>
 
     <div class="plans">
+
       <article class="plan">
         <span class="plan-label">LINH HOẠT</span>
         <h3>Gói 8 ngày</h3>
         <div class="price">50.000đ</div>
-        <p>Dùng thử hoặc chơi trong thời gian ngắn.</p>
-        <a href="#thanhtoan" class="plan-link">Cách thanh toán →</a>
+        <p>Sử dụng Cloud PC trong 8 ngày.</p>
+        <button class="btn btn-primary full buyBtn"
+          data-plan="Gói 8 ngày"
+          data-price="50000">
+          Mua ngay
+        </button>
       </article>
 
       <article class="plan featured">
         <span class="plan-label">TIẾT KIỆM</span>
         <h3>Gói 7 ngày</h3>
         <div class="price">49.000đ</div>
-        <p>Phù hợp khi bạn chơi thường xuyên.</p>
-        <a href="#thanhtoan" class="plan-link">Cách thanh toán →</a>
+        <p>Sử dụng Cloud PC trong 7 ngày.</p>
+        <button class="btn btn-primary full buyBtn"
+          data-plan="Gói 7 ngày"
+          data-price="49000">
+          Mua ngay
+        </button>
       </article>
 
       <article class="plan">
         <span class="plan-label">DÀI HẠN</span>
         <h3>Gói 30 ngày</h3>
         <div class="price">120.000đ</div>
-        <p>Sử dụng dài ngày với chi phí gọn nhẹ.</p>
-        <a href="#thanhtoan" class="plan-link">Cách thanh toán →</a>
+        <p>Sử dụng Cloud PC trong 30 ngày.</p>
+        <button class="btn btn-primary full buyBtn"
+          data-plan="Gói 30 ngày"
+          data-price="120000">
+          Mua ngay
+        </button>
       </article>
+
     </div>
 
     <div class="features">
@@ -90,25 +109,55 @@
     </div>
   </section>
 
+  <!-- THANH TOÁN -->
   <section class="section payment" id="thanhtoan">
     <span class="eyebrow">THANH TOÁN</span>
     <h2>Thanh toán Cloud PC</h2>
-    <p>Liên hệ PHT để xác nhận gói thuê và thông tin thanh toán.</p>
-    <div class="qr-placeholder">
+    <p>Chọn gói thuê và xác nhận đơn hàng trước khi thanh toán.</p>
+
+    <div class="qr-placeholder" id="qrArea">
       <div class="qr-icon">▦</div>
-      <strong>QR THANH TOÁN PHT</strong>
-      <span>Ảnh mã QR sẽ được cập nhật tại đây.</span>
+      <strong>QR ZALOPAY</strong>
+      <span>QR thanh toán sẽ được tích hợp sau khi kết nối ZaloPay.</span>
     </div>
-    <small>Chỉ thanh toán sau khi đã xác nhận đúng thông tin người nhận.</small>
+
+    <small>Chỉ xác nhận đơn hàng sau khi kiểm tra thanh toán.</small>
   </section>
 
+  <!-- LỊCH SỬ GIAO DỊCH -->
+  <section class="section" id="lichsu">
+    <span class="eyebrow">TÀI KHOẢN</span>
+    <h2>Lịch sử giao dịch</h2>
+    <p>Theo dõi các đơn hàng Cloud PC của bạn.</p>
+
+    <div class="qr-placeholder" id="transactionArea">
+      <div class="qr-icon">▤</div>
+      <strong>CHƯA CÓ GIAO DỊCH</strong>
+      <span>Đăng nhập và mua gói Cloud PC để xem đơn hàng tại đây.</span>
+    </div>
+  </section>
+
+  <!-- HƯỚNG DẪN -->
   <section class="section how" id="huongdan">
     <span class="eyebrow">BẮT ĐẦU</span>
     <h2>Cách thuê Cloud PC</h2>
+
     <div class="steps">
-      <div><b>01</b><h3>Chọn gói</h3><p>Xem giá và chọn thời hạn phù hợp.</p></div>
-      <div><b>02</b><h3>Liên hệ PHT</h3><p>Xác nhận cấu hình và lịch còn trống.</p></div>
-      <div><b>03</b><h3>Nhận hướng dẫn</h3><p>Nhận thông tin kết nối sau khi xác nhận thuê.</p></div>
+      <div>
+        <b>01</b>
+        <h3>Chọn gói</h3>
+        <p>Xem giá và chọn thời hạn phù hợp.</p>
+      </div>
+      <div>
+        <b>02</b>
+        <h3>Thanh toán</h3>
+        <p>Kiểm tra đơn hàng và thanh toán.</p>
+      </div>
+      <div>
+        <b>03</b>
+        <h3>Nhận Cloud PC</h3>
+        <p>Nhận thông tin kết nối sau khi xác nhận thuê.</p>
+      </div>
     </div>
   </section>
 </main>
@@ -118,9 +167,37 @@
     <span class="brand-mark">P</span>
     <span>PHT <b>Cluod PC</b></span>
   </a>
-  <p>© 2026 PHT Cluod PC. Thông tin giá có thể thay đổi.</p>
+  <p>© 2026 PHT Cluod PC. All rights reserved.</p>
 </footer>
 
+<!-- MODAL MUA GÓI -->
+<div class="modal" id="purchaseModal" aria-hidden="true">
+  <div class="modal-card">
+    <button class="close" id="closePurchase" type="button">×</button>
+
+    <span class="eyebrow">ĐẶT HÀNG PHT</span>
+    <h2>Xác nhận mua gói</h2>
+
+    <p>Gói thuê: <strong id="selectedPlan">---</strong></p>
+    <p>Giá tiền: <strong id="selectedPrice">0đ</strong></p>
+
+    <div class="qr-placeholder">
+      <div class="qr-icon">▦</div>
+      <strong>QR ZALOPAY</strong>
+      <span>Chưa kết nối cổng thanh toán ZaloPay.</span>
+    </div>
+
+    <p class="auth-message" id="purchaseMessage">
+      Vui lòng đăng nhập để tiếp tục đặt hàng.
+    </p>
+
+    <button class="btn btn-primary full" id="confirmPurchase" type="button">
+      Xác nhận đơn hàng
+    </button>
+  </div>
+</div>
+
+<!-- MODAL ĐĂNG NHẬP -->
 <div class="modal" id="loginModal" aria-hidden="true">
   <div class="modal-card">
     <button class="close" id="closeLogin" type="button" aria-label="Đóng">×</button>
@@ -131,19 +208,24 @@
 
     <form id="authForm">
       <label>Email
-        <input id="authEmail" type="email" required autocomplete="email" placeholder="Nhập email">
+        <input id="authEmail" type="email" required
+          autocomplete="email" placeholder="Nhập email">
       </label>
 
       <label>Mật khẩu
-        <input id="authPassword" type="password" required minlength="6" autocomplete="current-password" placeholder="Ít nhất 6 ký tự">
+        <input id="authPassword" type="password" required minlength="6"
+          autocomplete="current-password" placeholder="Ít nhất 6 ký tự">
       </label>
 
       <label id="confirmWrap" hidden>
         Xác nhận mật khẩu
-        <input id="authConfirm" type="password" minlength="6" autocomplete="new-password" placeholder="Nhập lại mật khẩu">
+        <input id="authConfirm" type="password" minlength="6"
+          autocomplete="new-password" placeholder="Nhập lại mật khẩu">
       </label>
 
-      <button class="btn btn-primary full" id="authSubmit" type="submit">Đăng nhập</button>
+      <button class="btn btn-primary full" id="authSubmit" type="submit">
+        Đăng nhập
+      </button>
     </form>
 
     <p class="auth-message" id="authMessage" role="status" aria-live="polite"></p>
@@ -156,12 +238,14 @@
     <div id="signedArea" hidden>
       <p>Tài khoản đang đăng nhập:</p>
       <strong id="userEmail"></strong>
-      <button class="btn btn-primary full" id="logoutBtn" type="button">Đăng xuất</button>
+      <button class="btn btn-primary full" id="logoutBtn" type="button">
+        Đăng xuất
+      </button>
     </div>
   </div>
 </div>
 
 <script type="module" src="script.js"></script>
 </body>
-                                            </html>
-  
+  </html>
+                                
