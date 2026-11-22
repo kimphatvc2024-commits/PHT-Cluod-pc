@@ -1,133 +1,167 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="utf-8">
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#071426">
-  <title>PHT Cluod PC | Cloud Gaming</title>
+  <title>PHT Cluod PC</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="topbar">
-    <a class="brand" href="#"><span class="brand-mark">P</span><span>PHT <b>Cluod PC</b></span></a>
-    <nav>
-      <a href="#goi">Bảng giá</a>
-      <a href="#huongdan">Hướng dẫn</a>
-      <button class="btn btn-outline" id="openLogin">Đăng nhập</button>
-    </nav>
-  </header>
 
-  <main>
-    <section class="hero">
-      <div class="hero-copy">
-        <span class="eyebrow">CLOUD GAMING • PHT</span>
-        <h1>Chơi game PC<br><span>không cần máy mạnh.</span></h1>
-        <p>Trải nghiệm Cloud PC từ thiết bị của bạn. Chọn gói thuê phù hợp và bắt đầu hành trình gaming cùng PHT.</p>
-        <div class="hero-actions">
-          <a class="btn btn-primary" href="#goi">Xem bảng giá</a>
-          <button class="btn btn-ghost" id="heroLogin">Đăng nhập tài khoản</button>
+<header class="topbar">
+  <a class="brand" href="#">
+    <span class="brand-mark">P</span>
+    <span>PHT <b>Cluod PC</b></span>
+  </a>
+  <nav>
+    <a href="#goi">Bảng giá</a>
+    <a href="#huongdan">Hướng dẫn</a>
+    <button class="btn btn-outline" id="openLogin">Đăng nhập</button>
+  </nav>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="hero-copy">
+      <span class="eyebrow">CLOUD GAMING • PHT</span>
+      <h1>Chơi game PC<br><span>không cần máy mạnh.</span></h1>
+      <p>Trải nghiệm Cloud PC từ thiết bị của bạn. Chọn gói thuê phù hợp và bắt đầu cùng PHT.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#goi">Xem bảng giá</a>
+        <button class="btn btn-ghost" id="heroLogin">Đăng nhập tài khoản</button>
+      </div>
+      <small class="notice">Vui lòng xác nhận tình trạng máy và lịch thuê trước khi thanh toán.</small>
+    </div>
+
+    <div class="visual">
+      <div class="screen">
+        <div class="screen-top"><i></i><i></i><i></i><span>PHT CLOUD DESKTOP</span></div>
+        <div class="screen-content">
+          <div class="cloud">☁</div>
+          <strong>YOUR CLOUD PC</strong>
+          <small>READY TO PLAY</small>
+          <div class="screen-line"></div>
+          <div class="screen-line short"></div>
         </div>
-        <small class="notice">Website giới thiệu dịch vụ. Tình trạng máy và lịch thuê cần được xác nhận trước khi thanh toán.</small>
       </div>
-      <div class="visual">
-        <div class="screen">
-          <div class="screen-top"><i></i><i></i><i></i><span>PHT CLOUD DESKTOP</span></div>
-          <div class="screen-content">
-            <div class="cloud">☁</div>
-            <strong>YOUR CLOUD PC</strong>
-            <small>READY TO PLAY</small>
-            <div class="screen-line"></div>
-            <div class="screen-line short"></div>
-          </div>
-        </div>
-        <div class="float-tag">⚡ Cloud Gaming</div>
+      <div class="float-tag">⚡ Cloud Gaming</div>
+    </div>
+  </section>
+
+  <section class="section" id="goi">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">BẢNG GIÁ</span>
+        <h2>Chọn gói Cloud PC</h2>
       </div>
-    </section>
+      <p>Giá tham khảo của PHT.</p>
+    </div>
 
-    <section class="section" id="goi">
-      <div class="section-head">
-        <div><span class="eyebrow">BẢNG GIÁ</span><h2>Chọn gói Cloud PC</h2></div>
-        <p>Giá tham khảo theo bảng giá PHT.</p>
-      </div>
-      <div class="plans">
-        <article class="plan">
-          <span class="plan-label">LINH HOẠT</span>
-          <h3>Gói tuần</h3>
-          <div class="price">50.000đ <small>/ 8 ngày</small></div>
-          <p>Dùng thử hoặc chơi trong thời gian ngắn.</p>
-          <a href="#huongdan" class="plan-link">Tìm hiểu cách thuê →</a>
-        </article>
-        <article class="plan featured">
-          <span class="plan-label">TIẾT KIỆM</span>
-          <h3>Gói tuần</h3>
-          <div class="price">49.000đ <small>/ 7 ngày</small></div>
-          <p>Phù hợp khi bạn chơi thường xuyên.</p>
-          <a href="#huongdan" class="plan-link">Tìm hiểu cách thuê →</a>
-        </article>
-        <article class="plan">
-          <span class="plan-label">DÀI HẠN</span>
-          <h3>Gói tháng</h3>
-          <div class="price">120.000đ <small>/ 30 ngày</small></div>
-          <p>Sử dụng dài ngày với chi phí gọn nhẹ.</p>
-          <a href="#huongdan" class="plan-link">Tìm hiểu cách thuê →</a>
-        </article>
-      </div>
-      <div class="features">
-        <span>✓ Có sẵn launcher GTA5VN (theo thông tin gói)</span>
-        <span>✓ Cần mạng ổn định để có trải nghiệm tốt</span>
-      </div>
-    </section>
+    <div class="plans">
+      <article class="plan">
+        <span class="plan-label">LINH HOẠT</span>
+        <h3>Gói 8 ngày</h3>
+        <div class="price">50.000đ</div>
+        <p>Dùng thử hoặc chơi trong thời gian ngắn.</p>
+        <a href="#thanhtoan" class="plan-link">Cách thanh toán →</a>
+      </article>
 
-    <section class="section how" id="huongdan">
-      <span class="eyebrow">BẮT ĐẦU</span>
-      <h2>Cách thuê Cloud PC</h2>
-      <div class="steps">
-        <div><b>01</b><h3>Chọn gói</h3><p>Xem giá và chọn thời hạn phù hợp.</p></div>
-        <div><b>02</b><h3>Liên hệ PHT</h3><p>Hỏi tình trạng máy, cấu hình và lịch còn trống.</p></div>
-        <div><b>03</b><h3>Nhận hướng dẫn</h3><p>Chỉ thanh toán sau khi xác nhận rõ dịch vụ và thông tin thuê.</p></div>
-      </div>
-    </section>
-  </main>
+      <article class="plan featured">
+        <span class="plan-label">TIẾT KIỆM</span>
+        <h3>Gói 7 ngày</h3>
+        <div class="price">49.000đ</div>
+        <p>Phù hợp khi bạn chơi thường xuyên.</p>
+        <a href="#thanhtoan" class="plan-link">Cách thanh toán →</a>
+      </article>
 
-  <footer>
-    <a class="brand" href="#"><span class="brand-mark">P</span><span>PHT <b>Cluod PC</b></span></a>
-    <p>© 2026 PHT Cluod PC. Thông tin giá có thể thay đổi.</p>
-  </footer>
+      <article class="plan">
+        <span class="plan-label">DÀI HẠN</span>
+        <h3>Gói 30 ngày</h3>
+        <div class="price">120.000đ</div>
+        <p>Sử dụng dài ngày với chi phí gọn nhẹ.</p>
+        <a href="#thanhtoan" class="plan-link">Cách thanh toán →</a>
+      </article>
+    </div>
 
-  <div class="modal" id="loginModal" aria-hidden="true">
-    <div class="modal-card">
-      <button class="close" id="closeLogin" type="button" aria-label="Đóng">×</button>
-      <span class="eyebrow">KHU VỰC THÀNH VIÊN</span>
-      <h2 id="authTitle">Đăng nhập</h2>
-      <p class="modal-note" id="authNote">Đăng nhập tài khoản PHT Cluod PC.</p>
+    <div class="features">
+      <span>✓ Có sẵn launcher GTA5VN (theo thông tin gói)</span>
+      <span>✓ Cần mạng ổn định để có trải nghiệm tốt</span>
+    </div>
+  </section>
 
-      <form id="authForm">
-        <label>Email
-          <input id="authEmail" type="email" required autocomplete="email" placeholder="Nhập email">
-        </label>
-        <label>Mật khẩu
-          <input id="authPassword" type="password" required minlength="6" autocomplete="current-password" placeholder="Ít nhất 6 ký tự">
-        </label>
-        <label id="confirmPasswordWrap" hidden>Xác nhận mật khẩu
-          <input id="authConfirmPassword" type="password" minlength="6" autocomplete="new-password" placeholder="Nhập lại mật khẩu">
-        </label>
-        <button class="btn btn-primary full" id="authSubmit" type="submit">Đăng nhập</button>
-      </form>
+  <section class="section payment" id="thanhtoan">
+    <span class="eyebrow">THANH TOÁN</span>
+    <h2>Thanh toán Cloud PC</h2>
+    <p>Liên hệ PHT để xác nhận gói thuê và thông tin thanh toán.</p>
+    <div class="qr-placeholder">
+      <div class="qr-icon">▦</div>
+      <strong>QR THANH TOÁN PHT</strong>
+      <span>Ảnh mã QR sẽ được cập nhật tại đây.</span>
+    </div>
+    <small>Chỉ thanh toán sau khi đã xác nhận đúng thông tin người nhận.</small>
+  </section>
 
-      <p class="demo-note" id="authMessage" role="status"></p>
+  <section class="section how" id="huongdan">
+    <span class="eyebrow">BẮT ĐẦU</span>
+    <h2>Cách thuê Cloud PC</h2>
+    <div class="steps">
+      <div><b>01</b><h3>Chọn gói</h3><p>Xem giá và chọn thời hạn phù hợp.</p></div>
+      <div><b>02</b><h3>Liên hệ PHT</h3><p>Xác nhận cấu hình và lịch còn trống.</p></div>
+      <div><b>03</b><h3>Nhận hướng dẫn</h3><p>Nhận thông tin kết nối sau khi xác nhận thuê.</p></div>
+    </div>
+  </section>
+</main>
 
-      <p id="switchText">Chưa có tài khoản?
-        <button id="switchAuthMode" type="button">Đăng ký</button>
-      </p>
+<footer>
+  <a class="brand" href="#">
+    <span class="brand-mark">P</span>
+    <span>PHT <b>Cluod PC</b></span>
+  </a>
+  <p>© 2026 PHT Cluod PC. Thông tin giá có thể thay đổi.</p>
+</footer>
 
-      <div id="signedInArea" hidden>
-        <p>Đang đăng nhập bằng:</p>
-        <strong id="signedInEmail"></strong>
-        <button class="btn btn-primary full" id="logoutButton" type="button">Đăng xuất</button>
-      </div>
+<div class="modal" id="loginModal" aria-hidden="true">
+  <div class="modal-card">
+    <button class="close" id="closeLogin" type="button" aria-label="Đóng">×</button>
+
+    <span class="eyebrow">KHU VỰC THÀNH VIÊN</span>
+    <h2 id="authTitle">Đăng nhập</h2>
+    <p class="modal-note" id="authNote">Đăng nhập tài khoản PHT Cluod PC.</p>
+
+    <form id="authForm">
+      <label>Email
+        <input id="authEmail" type="email" required autocomplete="email" placeholder="Nhập email">
+      </label>
+
+      <label>Mật khẩu
+        <input id="authPassword" type="password" required minlength="6" autocomplete="current-password" placeholder="Ít nhất 6 ký tự">
+      </label>
+
+      <label id="confirmWrap" hidden>
+        Xác nhận mật khẩu
+        <input id="authConfirm" type="password" minlength="6" autocomplete="new-password" placeholder="Nhập lại mật khẩu">
+      </label>
+
+      <button class="btn btn-primary full" id="authSubmit" type="submit">Đăng nhập</button>
+    </form>
+
+    <p class="auth-message" id="authMessage" role="status" aria-live="polite"></p>
+
+    <p id="switchText">
+      Chưa có tài khoản?
+      <button id="switchMode" type="button">Đăng ký</button>
+    </p>
+
+    <div id="signedArea" hidden>
+      <p>Tài khoản đang đăng nhập:</p>
+      <strong id="userEmail"></strong>
+      <button class="btn btn-primary full" id="logoutBtn" type="button">Đăng xuất</button>
     </div>
   </div>
+</div>
 
-  <script type="module" src="script.js"></script>
+<script type="module" src="script.js"></script>
 </body>
-</html> <script type="module" src="script.js"></script>
+                                            </html>
+  
