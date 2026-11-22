@@ -1,6 +1,5 @@
-
 import { createClient } from
-'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+  'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
 const supabase = createClient(
   'https://tbguiikouernqlncxjjj.supabase.co',
@@ -10,7 +9,13 @@ const supabase = createClient(
 const $ = id => document.getElementById(id);
 
 const modal = $('loginModal');
+const form = $('authForm');
+
 let isSignup = false;
+
+function message(text) {
+  $('authMessage').textContent = text;
+}
 
 function openModal() {
   modal.classList.add('show');
@@ -22,15 +27,20 @@ function closeModal() {
   modal.setAttribute('aria-hidden', 'true');
 }
 
-function setMessage(message) {
-  $('authMessage').textContent = message;
-}
-
 function setMode(signup) {
   isSignup = signup;
 
-  $('authTitle').textContent = signup ? 'Đăng ký' : 'Đăng nhập';
-  $('authSubmit').textContent = signup ? 'Tạo tài khoản' : 'Đăng nhập';
+  $('authTitle').textContent =
+    signup ? 'Đăng ký' : 'Đăng nhập';
+
+  $('authNote').textContent =
+    signup
+      ? 'Tạo tài khoản PHT Cluod PC.'
+      : 'Đăng nhập tài khoản PHT Cluod PC.';
+
+  $('authSubmit').textContent =
+    signup ? 'Tạo tài khoản' : 'Đăng nhập';
+
   $('confirmWrap').hidden = !signup;
 
   $('switchText').childNodes[0].textContent =
@@ -38,33 +48,52 @@ function setMode(signup) {
 
   $('switchMode').textContent =
     signup ? 'Đăng nhập' : 'Đăng ký';
+
+  $('authPassword').value = '';
+  $('authConfirm').value = '';
+}
+
+function updateAccount(user) {
+  $('signedArea').hidden = !user;
+  form.hidden = !!user;
+  $('switchText').hidden = !!user;
+
+  if (user) {
+    $('authTitle').textContent = 'Tài khoản của bạn';
+    $('authNote').textContent = 'Bạn đã đăng nhập PHT Cluod PC.';
+    $('userEmail').textContent = user.email || '';
+  } else {
+    setMode(false);
+  }
 }
 
 $('openLogin').addEventListener('click', openModal);
 $('heroLogin').addEventListener('click', openModal);
 $('closeLogin').addEventListener('click', closeModal);
 
-modal.addEventListener('click', e => {
-  if (e.target === modal) closeModal();
+modal.addEventListener('click', event => {
+  if (event.target === modal) closeModal();
 });
 
 $('switchMode').addEventListener('click', () => {
   setMode(!isSignup);
-  setMessage('');
+  message('');
 });
 
-$('authForm').addEventListener('submit', async e => {
-  e.preventDefault();
+form.addEventListener('submit', async event => {
+  event.preventDefault();
 
   const email = $('authEmail').value.trim();
   const password = $('authPassword').value;
 
   $('authSubmit').disabled = true;
-  setMessage('Đang xử lý...');
+  message('Đang xử lý...');
 
   try {
     if (isSignup) {
-      if (password !== $('authConfirm').value) {
+      const confirm = $('authConfirm').value;
+
+      if (password !== confirm) {
         throw new Error('Mật khẩu xác nhận không khớp.');
       }
 
@@ -79,64 +108,66 @@ $('authForm').addEventListener('submit', async e => {
       if (error) throw error;
 
       if (data.session) {
-        setMessage('Tạo tài khoản thành công!');
+        updateAccount(data.session.user);
+        message('Tạo tài khoản thành công!');
       } else {
-        $('authPassword').value = '';
-        $('authConfirm').value = '';
         setMode(false);
-        setMessage('Đăng ký thành công! Hãy kiểm tra email xác nhận, sau đó đăng nhập.');
+        message(
+          'Đăng ký thành công! Hãy kiểm tra email xác nhận, sau đó đăng nhập.'
+        );
       }
 
     } else {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password
-      });
+      const { data, error } =
+        await supabase.auth.signInWithPassword({
+          email,
+          password
+        });
 
       if (error) throw error;
 
-      setMessage('Đăng nhập thành công!');
+      updateAccount(data.user);
+      message('Đăng nhập thành công!');
     }
 
   } catch (error) {
-    setMessage(error.message);
+    message(error.message || 'Có lỗi xảy ra. Vui lòng thử lại.');
   } finally {
     $('authSubmit').disabled = false;
   }
 });
 
-function updateAccount(user) {
-  $('signedArea').hidden = !user;
-  $('authForm').hidden = !!user;
-  $('switchText').hidden = !!user;
-
-  if (user) {
-    $('userEmail').textContent = user.email;
-    $('authTitle').textContent = 'Tài khoản của bạn';
-  } else {
-    setMode(false);
-  }
-}
-
 $('logoutBtn').addEventListener('click', async () => {
-  const { error } = await supabase.auth.signOut();
+  $('logoutBtn').disabled = true;
 
-  if (error) {
-    setMessage(error.message);
-    return;
+  try {
+    const { error } = await supabase.auth.signOut();
+
+    if (error) throw error;
+
+    updateAccount(null);
+    message('Đã đăng xuất thành công.');
+
+  } catch (error) {
+    message(error.message || 'Không thể đăng xuất.');
+  } finally {
+    $('logoutBtn').disabled = false;
   }
-
-  setMessage('Đã đăng xuất!');
 });
 
 supabase.auth.onAuthStateChange((_event, session) => {
   updateAccount(session?.user ?? null);
 });
 
-const { data, error } = await supabase.auth.getSession();
+async function initialize() {
+  const { data, error } = await supabase.auth.getSession();
 
-if (error) {
-  setMessage(error.message);
-} else {
+  if (error) {
+    message('Không thể tải phiên đăng nhập: ' + error.message);
+    return;
+  }
+
   updateAccount(data.session?.user ?? null);
-          }
+}
+
+initialize();
