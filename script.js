@@ -17,6 +17,19 @@ let currentUser = null;
 let selectedPlan = '';
 let selectedPrice = 0;
 
+function formatVnd(amount) {
+  return Number(amount).toLocaleString('vi-VN') + 'đ';
+}
+
+function updateModalQrInfo(planName, price) {
+  if ($('modalQrAmount')) {
+    $('modalQrAmount').textContent = `Số tiền cần chuyển: ${formatVnd(price)}`;
+  }
+  if ($('transferMemo')) {
+    $('transferMemo').textContent = `PHT ${(planName || 'CLOUD PC').toUpperCase()}`;
+  }
+}
+
 function message(text) {
   $('authMessage').textContent = text;
 }
@@ -169,11 +182,15 @@ document.querySelectorAll('.buyBtn').forEach(button => {
     selectedPrice = Number(button.dataset.price);
 
     $('selectedPlan').textContent = selectedPlan;
-    $('selectedPrice').textContent =
-      selectedPrice.toLocaleString('vi-VN') + 'đ';
+    $('selectedPrice').textContent = formatVnd(selectedPrice);
+    updateModalQrInfo(selectedPlan, selectedPrice);
+
+    const confirmBtn = $('confirmPurchase');
+    confirmBtn.disabled = false;
+    confirmBtn.textContent = 'Xác nhận đơn hàng';
 
     $('purchaseMessage').textContent = currentUser
-      ? 'Kiểm tra thông tin đơn hàng trước khi tiếp tục.'
+      ? 'Quét mã QR thanh toán, sau đó bấm xác nhận để lưu đơn chờ kiểm tra.'
       : 'Bạn cần đăng nhập trước khi đặt hàng.';
 
     purchaseModal.classList.add('show');
@@ -220,10 +237,9 @@ $('confirmPurchase').addEventListener('click', async () => {
     if (error) throw error;
 
     $('purchaseMessage').textContent =
-      'Đã tạo đơn hàng #' + data.id +
-      '. Đơn đang chờ thanh toán.';
+      `Đã tạo đơn hàng #${data.id} (Trạng thái: Chờ xác minh thanh toán).`;
 
-    button.textContent = 'Đã tạo đơn hàng';
+    button.textContent = 'Đã tạo đơn (Chờ xác minh)';
 
     await loadTransactions();
 
@@ -232,7 +248,6 @@ $('confirmPurchase').addEventListener('click', async () => {
       'Không tạo được đơn hàng: ' + error.message;
 
     button.textContent = 'Thử lại';
-  } finally {
     button.disabled = false;
   }
 });
@@ -240,6 +255,7 @@ $('confirmPurchase').addEventListener('click', async () => {
 // LỊCH SỬ GIAO DỊCH
 function showEmptyHistory(text) {
   const area = $('transactionArea');
+  area.classList.remove('tx-list');
   area.replaceChildren();
 
   const icon = document.createElement('div');
@@ -259,6 +275,7 @@ async function loadTransactions() {
   if (!currentUser) return;
 
   const area = $('transactionArea');
+  area.classList.remove('tx-list');
   area.textContent = 'Đang tải lịch sử giao dịch...';
 
   try {
@@ -277,6 +294,8 @@ async function loadTransactions() {
       return;
     }
 
+    area.classList.add('tx-list');
+
     data.forEach(item => {
       const card = document.createElement('article');
       card.className = 'plan';
@@ -286,14 +305,13 @@ async function loadTransactions() {
 
       const price = document.createElement('div');
       price.className = 'price';
-      price.textContent =
-        Number(item.amount).toLocaleString('vi-VN') + 'đ';
+      price.textContent = formatVnd(item.amount);
 
       const status = document.createElement('p');
       status.textContent =
         item.status === 'paid'
-          ? 'Đã thanh toán'
-          : 'Đang chờ thanh toán';
+          ? 'Đã xác minh thanh toán'
+          : 'Chờ xác minh thanh toán';
 
       const date = document.createElement('small');
       date.textContent = new Date(item.created_at)
@@ -325,4 +343,4 @@ async function initialize() {
 }
 
 initialize();
-    
+  
