@@ -113,12 +113,21 @@
   <section class="section payment" id="thanhtoan">
     <span class="eyebrow">THANH TOÁN</span>
     <h2>Thanh toán Cloud PC</h2>
-    <p>Chọn gói thuê và xác nhận đơn hàng trước khi thanh toán.</p>
+    <p>Chọn gói thuê và quét mã QR ZaloPay để thanh toán đúng số tiền của gói.</p>
 
-    <div class="qr-placeholder" id="qrArea">
-      <div class="qr-icon">▦</div>
-      <strong>QR ZALOPAY</strong>
-      <span>QR thanh toán sẽ được tích hợp sau khi kết nối ZaloPay.</span>
+    <div class="qr-box" id="qrArea">
+      <span class="qr-badge">QR ZALOPAY • KIM PHAT</span>
+      <div class="qr-frame">
+        <img
+          src="zalopay-qr.jpg"
+          alt="Mã QR ZaloPay nhận tiền - KIM PHAT"
+          class="qr-image"
+          loading="lazy"
+        >
+      </div>
+      <strong>Quét mã QR để thanh toán</strong>
+      <span>Hỗ trợ ZaloPay và các ứng dụng chuyển tiền hỗ trợ quét mã QR.</span>
+      <small class="qr-note">Trạng thái đơn sẽ được cập nhật sau khi xác minh giao dịch.</small>
     </div>
 
     <small>Chỉ xác nhận đơn hàng sau khi kiểm tra thanh toán.</small>
@@ -151,12 +160,12 @@
       <div>
         <b>02</b>
         <h3>Thanh toán</h3>
-        <p>Kiểm tra đơn hàng và thanh toán.</p>
+        <p>Kiểm tra đơn hàng và quét mã QR thanh toán.</p>
       </div>
       <div>
         <b>03</b>
         <h3>Nhận Cloud PC</h3>
-        <p>Nhận thông tin kết nối sau khi xác nhận thuê.</p>
+        <p>Nhận thông tin kết nối sau khi giao dịch được xác minh.</p>
       </div>
     </div>
   </section>
@@ -173,7 +182,7 @@
 <!-- MODAL MUA GÓI -->
 <div class="modal" id="purchaseModal" aria-hidden="true">
   <div class="modal-card">
-    <button class="close" id="closePurchase" type="button">×</button>
+    <button class="close" id="closePurchase" type="button" aria-label="Đóng">×</button>
 
     <span class="eyebrow">ĐẶT HÀNG PHT</span>
     <h2>Xác nhận mua gói</h2>
@@ -181,10 +190,18 @@
     <p>Gói thuê: <strong id="selectedPlan">---</strong></p>
     <p>Giá tiền: <strong id="selectedPrice">0đ</strong></p>
 
-    <div class="qr-placeholder">
-      <div class="qr-icon">▦</div>
-      <strong>QR ZALOPAY</strong>
-      <span>Chưa kết nối cổng thanh toán ZaloPay.</span>
+    <div class="qr-box qr-box-compact" id="modalQrBox">
+      <span class="qr-badge">QR ZALOPAY</span>
+      <div class="qr-frame qr-frame-sm">
+        <img
+          src="zalopay-qr.jpg"
+          alt="Mã QR ZaloPay thanh toán gói Cloud PC"
+          class="qr-image"
+        >
+      </div>
+      <strong id="modalQrAmount">Quét mã để chuyển khoản</strong>
+      <span id="modalQrHint">Nội dung gợi ý: <b id="transferMemo">PHT CLOUD PC</b></span>
+      <small class="qr-note">Sau khi bấm xác nhận, đơn ở trạng thái chờ xác minh thanh toán.</small>
     </div>
 
     <p class="auth-message" id="purchaseMessage">
@@ -247,5 +264,5 @@
 
 <script type="module" src="script.js"></script>
 </body>
-  </html>
-                                
+        </html>
+                                        
