@@ -142,19 +142,34 @@
   <small>YOUR CLOUD. YOUR GAME.</small>
 </footer>
 
+
 <!-- PURCHASE MODAL -->
 <div class="modal" id="purchaseModal" aria-hidden="true">
   <div class="modal-box">
     <button class="modal-close" id="closePurchase">×</button>
     <span class="eyebrow">NEW ORDER</span>
     <h2>Đặt thuê Cloud PC</h2>
+
     <p>Gói thuê: <strong id="selectedPlan">---</strong></p>
     <p>Giá: <strong id="selectedPrice">---</strong></p>
     <p id="modalQrAmount"></p>
+
+    <h3>Quét mã QR ZaloPay</h3>
+    <img
+      src="zlp-1793367267230.jpg"
+      alt="Mã QR thanh toán ZaloPay"
+      style="display:block;width:min(240px,100%);height:auto;margin:14px auto;border-radius:12px;background:white;padding:8px;"
+    >
+
+    <p>Người nhận: KIM PHAT</p>
     <p>Nội dung chuyển khoản:</p>
     <strong id="transferMemo"></strong>
+
     <div id="purchaseMessage" class="message"></div>
-    <button id="confirmPurchase" class="btn btn-primary full-width">Xác nhận đã chuyển khoản</button>
+
+    <button id="confirmPurchase" class="btn btn-primary full-width">
+      Xác nhận đã chuyển khoản
+    </button>
   </div>
 </div>
 
